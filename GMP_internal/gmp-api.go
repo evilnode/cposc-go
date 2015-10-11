@@ -23,7 +23,7 @@ func resolveParams(params map[int]string) {
 }
 
 // Perform the GMP operation
-func PerformActionWitnType(action string, params map[int]string) {
+func PerformActionWitnType(action string, params map[int]string, test bool) {
 	// filter out invalid params
 	resolveParams(params)
 	params[KeyHitType] = action
@@ -36,11 +36,13 @@ func PerformActionWitnType(action string, params map[int]string) {
 		k, _ := ParamKey(key)
 		urlValues.Add(k, value)
 	}
-	go func() {
-		log.Println(fmt.Sprintf("%s?%s", ENGA_ENDPOINT_SSL, urlValues.Encode()))
-		_, err := http.PostForm(ENGA_ENDPOINT_SSL, urlValues)
-		if err != nil {
-			log.Println(err.Error())
-		}
-	}()
+	log.Println(fmt.Sprintf("%s?%s", ENGA_ENDPOINT_SSL, urlValues.Encode()))
+	if !test {
+		go func() {
+			_, err := http.PostForm(ENGA_ENDPOINT_SSL, urlValues)
+			if err != nil {
+				log.Println(err.Error())
+			}
+		}()
+	}
 }
