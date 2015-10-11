@@ -1,24 +1,46 @@
 package GMP_internal
 
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"net/url"
+)
+
 // This filters out bogus or erroneous params
-func resolveParams(params map[GMPParamKey]string) {
-	kick := []GMPParamKey{}
+func resolveParams(params map[int]string) {
+	kick := []int{}
 	for key, _ := range params {
-		if ParamKey(key) == "" {
+		_, exists := ParamKey(key)
+		if !exists {
 			kick = append(kick, key)
 		}
 	}
+	// kick'em
 	for i := range kick {
 		delete(params, kick[i])
 	}
 }
 
 // Perform the GMP operation
-func PerformActionWitnType(hitType GMPHitType, action string, params map[GMPParamKey]string) error {
+func PerformActionWitnType(action string, params map[int]string) {
+	// filter out invalid params
 	resolveParams(params)
 	params[KeyHitType] = action
+	params[KeyClientID] = ClientIdentifier
 
-	if params[KeyReservedUserAgent] == "" {
-		params[KeyReservedUserAgent] = ENGA_USERAGENT_STRING
+	// assemble the query string
+	// @see https://play.golang.org/p/GmP3n99lig
+	urlValues := make(url.Values)
+	for key, value := range params {
+		k, _ := ParamKey(key)
+		urlValues.Add(k, value)
 	}
+	go func() {
+		log.Println(fmt.Sprintf("%s?%s", ENGA_ENDPOINT_SSL, urlValues.Encode()))
+		_, err := http.PostForm(ENGA_ENDPOINT_SSL, urlValues)
+		if err != nil {
+			log.Println(err.Error())
+		}
+	}()
 }

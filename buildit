@@ -1,3 +1,4 @@
 #!/bin/bash
 
+rm -rf ./GMP.framework
 gomobile bind -v -prefix "" -target=ios github.com/evilnode/cposc-go/GMP

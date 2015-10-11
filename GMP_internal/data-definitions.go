@@ -1,20 +1,17 @@
 package GMP_internal
 
-type GMPHitType int
-type GMPParamKey int
-
-// Bridge variables
-var (
-	ENGA_NO_SSL bool = false
+import (
+	"sync"
 )
+
+var ClientIdentifier string = "ANONYMOUS AARDVARK"
 
 // String Constants
 const (
 	ENGA_VERSION          string = "0.0.1"
-	ENGA_USERAGENT_STRING        = "Evilnode GMP Lib"
+	ENGA_USERAGENT_STRING        = "Evilnode GMP GoLang Lib"
 	ENGA_CID_NAME                = "ENGAV0.0.1USERTOKEN"
 	ENGA_ENDPOINT_SSL            = "https://ssl.google-analytics.com/collect"
-	ENGA_ENDPOINT_NO_SSL         = "http://www.google-analytics.com/collect"
 )
 
 // Hit Types
@@ -87,70 +84,73 @@ const (
 	KeyExceptionFatal
 	KeyExperimentID
 	KeyExperimentVariant
-	KeyReservedUserAgent
-	KeyReservedUserDefinedHeader
 )
 
-const paramKeys = map[GMPParamKey]string{
-	KeyVersion:                 "v",
-	KeyHitType:                 "t",
-	KeyTrackingID:              "tid",
-	KeyClientID:                "cid",
-	KeyCampaignName:            "cn",
-	KeyCampaignSource:          "cs",
-	KeyCampaignMedium:          "cm",
-	KeyCampaignKeyword:         "ck",
-	KeyCampaignContent:         "cc",
-	KeyCampaignID:              "ci",
-	KeyAdwordsID:               "gclid",
-	KeyDisplayAdsID:            "dclid",
-	KeyShouldAnonymizeIP:       "aip",
-	KeyShouldUseSessionControl: "sc",
-	KeyScreenResolution:        "sr",
-	KeyViewportSize:            "vp",
-	KeyDocumentEncoding:        "de",
-	KeyScreenColors:            "sd",
-	KeyUserLanguage:            "ul",
-	KeyAppName:                 "an",
-	KeyAppVersion:              "av",
-	KeyTransactionID:           "ti",
-	KeyTransactionAffiliation:  "ta",
-	KeyTransactionRevenue:      "tr",
-	KeyTransactionShipping:     "ts",
-	KeyTransactionTax:          "tt",
-	KeyNonInteractiveHit:       "ni",
-	KeyContentDescription:      "cd",
-	KeyLinkID:                  "linkid",
-	KeyEventCategory:           "ec",
-	KeyEventAction:             "ea",
-	KeyEventLabel:              "el",
-	KeyEventValue:              "ev",
-	KeyItemName:                "in",
-	KeyItemPrice:               "ip",
-	KeyItemQuantity:            "iq",
-	KeyItemCode:                "ic",
-	KeyItemCategory:            "iv",
-	KeyCurrencyCode:            "cu",
-	KeySocialNetwork:           "sn",
-	KeySocialAction:            "sa",
-	KeySocialActionTarget:      "st",
-	KeyUserTimingCategory:      "utc",
-	KeyUserTimingVariableName:  "utv",
-	KeyUserTimingTime:          "utt",
-	KeyUserTimingLabel:         "utl",
-	KeyPageLoadTime:            "plt",
-	KeyDNSTime:                 "dns",
-	KeyPageDownloadTime:        "pdt",
-	KeyRedirectResponseTime:    "rrt",
-	KeyTCPConnectTime:          "tcp",
-	KeyServerResponseTime:      "srt",
-	KeyExceptionDescription:    "exd",
-	KeyExceptionFatal:          "exf",
-	KeyExperimentID:            "xid",
-	KeyExperimentVariant:       "xvar",
-}
+var paramKeys map[int]string
+var paramKeysOnce sync.Once
 
 // Get the GMP Param key for the selected field
-func ParamKey(param GMPParamKey) string {
-	return paramKeys[param]
+func ParamKey(param int) (string, bool) {
+	paramKeysOnce.Do(func() {
+		paramKeys = map[int]string{
+			KeyVersion:                 "v",
+			KeyHitType:                 "t",
+			KeyTrackingID:              "tid",
+			KeyClientID:                "cid",
+			KeyCampaignName:            "cn",
+			KeyCampaignSource:          "cs",
+			KeyCampaignMedium:          "cm",
+			KeyCampaignKeyword:         "ck",
+			KeyCampaignContent:         "cc",
+			KeyCampaignID:              "ci",
+			KeyAdwordsID:               "gclid",
+			KeyDisplayAdsID:            "dclid",
+			KeyShouldAnonymizeIP:       "aip",
+			KeyShouldUseSessionControl: "sc",
+			KeyScreenResolution:        "sr",
+			KeyViewportSize:            "vp",
+			KeyDocumentEncoding:        "de",
+			KeyScreenColors:            "sd",
+			KeyUserLanguage:            "ul",
+			KeyAppName:                 "an",
+			KeyAppVersion:              "av",
+			KeyTransactionID:           "ti",
+			KeyTransactionAffiliation:  "ta",
+			KeyTransactionRevenue:      "tr",
+			KeyTransactionShipping:     "ts",
+			KeyTransactionTax:          "tt",
+			KeyNonInteractiveHit:       "ni",
+			KeyContentDescription:      "cd",
+			KeyLinkID:                  "linkid",
+			KeyEventCategory:           "ec",
+			KeyEventAction:             "ea",
+			KeyEventLabel:              "el",
+			KeyEventValue:              "ev",
+			KeyItemName:                "in",
+			KeyItemPrice:               "ip",
+			KeyItemQuantity:            "iq",
+			KeyItemCode:                "ic",
+			KeyItemCategory:            "iv",
+			KeyCurrencyCode:            "cu",
+			KeySocialNetwork:           "sn",
+			KeySocialAction:            "sa",
+			KeySocialActionTarget:      "st",
+			KeyUserTimingCategory:      "utc",
+			KeyUserTimingVariableName:  "utv",
+			KeyUserTimingTime:          "utt",
+			KeyUserTimingLabel:         "utl",
+			KeyPageLoadTime:            "plt",
+			KeyDNSTime:                 "dns",
+			KeyPageDownloadTime:        "pdt",
+			KeyRedirectResponseTime:    "rrt",
+			KeyTCPConnectTime:          "tcp",
+			KeyServerResponseTime:      "srt",
+			KeyExceptionDescription:    "exd",
+			KeyExceptionFatal:          "exf",
+			KeyExperimentID:            "xid",
+			KeyExperimentVariant:       "xvar",
+		}
+	})
+	p, e := paramKeys[param]
+	return p, e
 }
