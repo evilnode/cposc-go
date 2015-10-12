@@ -12,14 +12,18 @@ var paramBuffer map[int]string = make(map[int]string)
 var defaultParamBuffer map[int]string = make(map[int]string)
 var clearsContextAfterRequest bool = true
 
+func coallesceDefaultParams() {
+	for key, value := range defaultParamBuffer {
+		paramBuffer[key] = value
+	}
+}
+
 //  Wipe param buffer and reset defaults
 func ClearRequestContext() {
 	for key, _ := range paramBuffer {
 		delete(paramBuffer, key)
 	}
-	for key, value := range defaultParamBuffer {
-		paramBuffer[key] = value
-	}
+	coallesceDefaultParams()
 }
 
 //
@@ -44,6 +48,7 @@ func SetClientIdentifier(identifier string) {
 }
 
 func callInternalRequest(hitType string, test bool) {
+	coallesceDefaultParams()
 	internal.PerformActionWitnType(hitType, paramBuffer, test)
 	if clearsContextAfterRequest {
 		ClearRequestContext()
@@ -51,11 +56,21 @@ func callInternalRequest(hitType string, test bool) {
 }
 
 //	Perform Page View
-func PageView(test bool) {
-	callInternalRequest("pageview", test)
+func PageView() {
+	callInternalRequest("pageview", false)
+}
+
+//	Test page view url
+func TestPageView() {
+	callInternalRequest("pageview", true)
 }
 
 //	Perform Event
-func Event(test bool) {
-	callInternalRequest("event", test)
+func Event() {
+	callInternalRequest("event", false)
+}
+
+//	Test event url
+func TestEvent() {
+	callInternalRequest("event", true)
 }

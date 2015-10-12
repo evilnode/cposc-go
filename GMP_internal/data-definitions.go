@@ -38,6 +38,9 @@ const (
 	KeyCampaignKeyword
 	KeyCampaignContent
 	KeyCampaignID
+	KeyDocumentHostName
+	KeyDocumentPage
+	KeyDocumentTitle
 	KeyAdwordsID
 	KeyDisplayAdsID
 	KeyShouldAnonymizeIP
@@ -103,6 +106,9 @@ func ParamKey(param int) (string, bool) {
 			KeyCampaignKeyword:         "ck",
 			KeyCampaignContent:         "cc",
 			KeyCampaignID:              "ci",
+			KeyDocumentHostName:        "dh",
+			KeyDocumentPage:            "dp",
+			KeyDocumentTitle:           "dt",
 			KeyAdwordsID:               "gclid",
 			KeyDisplayAdsID:            "dclid",
 			KeyShouldAnonymizeIP:       "aip",

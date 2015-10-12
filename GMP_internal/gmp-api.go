@@ -42,6 +42,8 @@ func PerformActionWitnType(action string, params map[int]string, test bool) {
 			_, err := http.PostForm(ENGA_ENDPOINT_SSL, urlValues)
 			if err != nil {
 				log.Println(err.Error())
+			} else {
+				log.Println("success")
 			}
 		}()
 	}
