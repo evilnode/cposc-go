@@ -1,6 +1,7 @@
 package GMP_internal
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"net/http"
@@ -39,11 +40,13 @@ func PerformActionWitnType(action string, params map[int]string, test bool) {
 	log.Println(fmt.Sprintf("%s?%s", ENGA_ENDPOINT_SSL, urlValues.Encode()))
 	if !test {
 		go func() {
-			_, err := http.PostForm(ENGA_ENDPOINT_SSL, urlValues)
+			reader := bytes.NewReader([]byte(urlValues.Encode()))
+			resp, err := http.Post(ENGA_ENDPOINT_SSL, "application/x-www-form-urlencoded", reader)
 			if err != nil {
 				log.Println(err.Error())
 			} else {
-				log.Println("success")
+				defer resp.Body.Close()
+				log.Println(resp)
 			}
 		}()
 	}
